@@ -1,8 +1,8 @@
-from django.contrib.auth import get_user_model
-from django.db import models
-
 from core.models import BaseModel
 from core.utils import generate_uuid
+
+from django.contrib.auth import get_user_model
+from django.db import models
 
 
 class Exam(BaseModel):

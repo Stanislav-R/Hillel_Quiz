@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ExamListView, ExamDetailView
+from .views import ExamDetailView, ExamListView
 
 app_name = 'quizzes'
 

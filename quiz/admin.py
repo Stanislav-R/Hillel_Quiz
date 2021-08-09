@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Exam, Question, Choice, Result
+from .models import Choice, Exam, Question, Result
 
 
 admin.site.register(Exam)

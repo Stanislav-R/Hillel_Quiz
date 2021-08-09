@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import account_profile_view, user_activate, AccountLoginView, AccountLogoutView, AccountRegistrationView, \
-    AccountUpdateProfileView, AccountRegistrationDoneView
+from .views import AccountLoginView, AccountLogoutView, AccountRegistrationDoneView, AccountRegistrationView, \
+    AccountUpdateProfileView, account_profile_view, user_activate
 
 app_name = 'accounts'
 
