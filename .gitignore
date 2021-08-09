@@ -129,7 +129,9 @@ dmypy.json
 .pyre/
 .idea/
 
-buffer.txt
 **/migrations/**
 !**/migrations
 !**/migrations/__init__.py
+
+media/
+static/
