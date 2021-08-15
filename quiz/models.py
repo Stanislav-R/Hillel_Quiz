@@ -1,8 +1,14 @@
+import datetime
+
+# from accounts.models import CustomUser
 from core.models import BaseModel
 from core.utils import generate_uuid
 
+from dateutil.relativedelta import relativedelta
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.timezone import utc
 
 
 class Exam(BaseModel):
@@ -57,6 +63,9 @@ class Result(BaseModel):
     current_order_number = models.PositiveSmallIntegerField(null=True)
     num_correct_answers = models.PositiveSmallIntegerField(default=0)
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0)
+    success_rate = models.PositiveSmallIntegerField(default=0)
+    score = models.PositiveSmallIntegerField(default=0)
+    time_diff = models.CharField(max_length=30, null=True)
 
     def update_result(self, order_number, question, selected_choices):
         correct_choice = [choice.is_correct for choice in question.choices.all()]
@@ -66,8 +75,18 @@ class Result(BaseModel):
 
         self.num_correct_answers += int(correct_answer)
         self.num_incorrect_answers += 1 - int(correct_answer)
+        self.success_rate = (self.num_correct_answers / (self.num_correct_answers + self.num_incorrect_answers)) * 100
+        self.score = 0 if (self.num_correct_answers - self.num_incorrect_answers) <= 0 \
+            else self.num_correct_answers - self.num_incorrect_answers
+        time_diff = relativedelta(datetime.datetime.utcnow().replace(tzinfo=utc), self.create_timestamp)
+        self.time_diff = "%dh:%dm:%ds" % (time_diff.hours, time_diff.minutes, time_diff.seconds)
 
         if order_number == question.exam.questions_count():
             self.state = self.STATE.FINISHED
+
+            if (self.num_correct_answers + self.num_incorrect_answers) // 2 == 0 and self.results.rating > 0:
+                self.results.rating += 1
+            else:
+                self.results.rating -= 1
 
         self.save()

@@ -23,6 +23,12 @@ class QuestionInlineFormSet(BaseInlineFormSet):
                 self.instance.QUESTION_MIN_LIMIT,
                 self.instance.QUESTION_MAX_LIMIT
             ))
+        # for form in self.forms:
+        #     print(form.cleaned_data['text'], form.cleaned_data['order_num'])
+        # for form in self.forms:
+        #     if 1 < form.cleaned_data['order_num'] < len(self.forms):
+        #         form.cleaned_data['order_num'] += 1
+        #     print(form.cleaned_data)
 
 
 class ChoiceForm(ModelForm):
