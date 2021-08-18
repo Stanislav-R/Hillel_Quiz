@@ -23,12 +23,14 @@ class QuestionInlineFormSet(BaseInlineFormSet):
                 self.instance.QUESTION_MIN_LIMIT,
                 self.instance.QUESTION_MAX_LIMIT
             ))
-        # for form in self.forms:
-        #     print(form.cleaned_data['text'], form.cleaned_data['order_num'])
-        # for form in self.forms:
-        #     if 1 < form.cleaned_data['order_num'] < len(self.forms):
-        #         form.cleaned_data['order_num'] += 1
-        #     print(form.cleaned_data)
+
+        order_num = [form.cleaned_data['order_num'] for form in self.forms]
+        if min(order_num) != 1:
+            raise ValidationError('Нумерация должна начинаться с 1')
+        if max(order_num) != len(self.forms):
+            raise ValidationError('Максимальный порядковый номер не может быть больше количества вопросов в тесте')
+        if len(order_num) != len(set(order_num)):
+            raise ValidationError('Неправильная нумерация')
 
 
 class ChoiceForm(ModelForm):
