@@ -138,6 +138,8 @@ class ExamResultDetailView(LoginRequiredMixin, DetailView):
 
 
 class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
+    # permission_required = ['accounts.view_statistics']
+
     def get(self, request, *args, **kwargs):
         uuid = kwargs['uuid']
         result_uuid = kwargs['result_uuid']
