@@ -24,6 +24,14 @@ class QuestionInlineFormSet(BaseInlineFormSet):
                 self.instance.QUESTION_MAX_LIMIT
             ))
 
+        order_num = [form.cleaned_data['order_num'] for form in self.forms]
+        if min(order_num) != 1:
+            raise ValidationError('Нумерация должна начинаться с 1')
+        if max(order_num) != len(self.forms):
+            raise ValidationError('Максимальный порядковый номер не может быть больше количества вопросов в тесте')
+        if len(order_num) != len(set(order_num)):
+            raise ValidationError('Неправильная нумерация')
+
 
 class ChoiceForm(ModelForm):
     is_selected = forms.BooleanField(required=False)

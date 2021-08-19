@@ -1,8 +1,14 @@
+import datetime
+
+from accounts.models import CustomUser
 from core.models import BaseModel
 from core.utils import generate_uuid
 
+from dateutil.relativedelta import relativedelta
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.timezone import utc
 
 
 class Exam(BaseModel):
@@ -66,12 +72,21 @@ class Result(BaseModel):
 
         self.num_correct_answers += int(correct_answer)
         self.num_incorrect_answers += 1 - int(correct_answer)
-        self.current_order_number = order_number
 
         if order_number == question.exam.questions_count():
             self.state = self.STATE.FINISHED
 
+            self.user.rating = self.user.rating + max(0, self.num_correct_answers - self.num_incorrect_answers)
+            self.user.save()
+
         self.save()
+
+    def time_diff(self):
+        time_diff = relativedelta(datetime.datetime.utcnow().replace(tzinfo=utc), self.create_timestamp)
+        return "%dh:%dm:%ds" % (time_diff.hours, time_diff.minutes, time_diff.seconds)
+
+    def success_rate(self):
+        return (self.num_correct_answers / (self.num_correct_answers + self.num_incorrect_answers)) * 100
 
     def points(self):
         return max(0, self.num_correct_answers - self.num_incorrect_answers)

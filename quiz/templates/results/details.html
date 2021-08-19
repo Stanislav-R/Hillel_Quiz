@@ -23,6 +23,10 @@
                             <td>{{ result.update_timestamp }}</td>
                         </tr>
                         <tr>
+                            <td>Общее время прохождения теста</td>
+                            <td> {{ result.time_diff }} </td>
+                        </tr>
+                        <tr>
                             <td>Пользователь</td>
                             <td>{{ result.user }}</td>
                         </tr>
@@ -30,6 +34,17 @@
                             <td>Результат</td>
                             <td>{{ result.num_correct_answers }} / {{ result.num_incorrect_answers }}</td>
                         </tr>
+                        <tr>
+                            <td>Процент успешного прохождения теста</td>
+                        <td>{{ result.success_rate }}%</td>
+                        <tr>
+                            <td>Количество баллов</td>
+                        <td>{{ result.points }}</td>
+                        </tr>
+                        <tr>
+                            <td>Время прохождения теста</td>
+                        <td>{{ result.time_diff }}</td>
+                        <tr>
                     </tbody>
               </table>
             </div>
