@@ -73,7 +73,9 @@
                         <a class="btn btn-warning" href="{% url 'quizzes:result_update' exam.uuid result.uuid %}">
                             Продолжить
                         </a>
-                        <a class="btn btn-danger" href="#">Удалить</a>
+                        <a class="btn btn-danger" href="{% url 'quizzes:result_delete' exam.uuid result.uuid %}">
+                            Удалить
+                        </a>
                     {% else %}
                         <a class="btn btn-success" href="{% url 'quizzes:result_details' exam.uuid result.uuid  %}">
                             Посмотреть

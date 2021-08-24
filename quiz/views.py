@@ -1,8 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
 from django.views.generic.list import MultipleObjectMixin
 
 from .forms import ChoicesFormSet
@@ -103,9 +104,15 @@ class ExamQuestionView(LoginRequiredMixin, UpdateView):
 
         choices = ChoicesFormSet(data=request.POST)
         selected_choices = ['is_selected' in form.changed_data for form in choices.forms]
-
-        result = Result.objects.get(uuid=result_uuid)
-        result.update_result(order_number, question, selected_choices)
+        if selected_choices.count(True) == 0:
+            messages.warning(request, 'Выберите один или несколько правильных ответов')
+            order_number = result.current_order_number
+        elif selected_choices.count(True) == len(selected_choices):
+            messages.warning(request, 'Все ответы не могут быть правильными')
+            order_number = result.current_order_number
+        else:
+            result = Result.objects.get(uuid=result_uuid)
+            result.update_result(order_number, question, selected_choices)
 
         if result.state == Result.STATE.FINISHED:
             return HttpResponseRedirect(reverse(
@@ -158,3 +165,28 @@ class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
                 # 'order_number': result.current_order_number + 1,
             }
         ))
+
+
+class ExamResultDeleteView(LoginRequiredMixin, DeleteView):
+    def get(self, request, *args, **kwargs):
+        result_uuid = kwargs['result_uuid']
+        user = request.user
+
+        result = Result.objects.get(
+            user=user,
+            uuid=result_uuid
+        )
+        result.delete()
+
+        return HttpResponseRedirect(reverse('quizzes:result_list'))
+
+
+class ExamResultListView(LoginRequiredMixin, ListView):
+    model = Result
+    template_name = 'results/list.html'
+    context_object_name = 'results'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = self.request.user
+        return Result.objects.filter(user=user)
