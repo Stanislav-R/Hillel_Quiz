@@ -1,6 +1,5 @@
 import datetime
 
-from accounts.models import CustomUser
 from core.models import BaseModel
 from core.utils import generate_uuid
 
